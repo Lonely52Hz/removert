@@ -10,35 +10,35 @@ removert:
   # @ save option 
   saveMapPCD: true 
   saveCleanScansPCD: true
-  save_pcd_directory: "/home/wzhoea/Desktop/removert_save/run4/" # replace to your path (please use an absolute path)
+  save_pcd_directory: "/home/wzhoea/Desktop/erasor/save/removert/150_300/" # replace to your path (please use an absolute path)
 
 
   # @ sequence info (replace to your paths) 
   #   please follow the KITTI odometry dataset's scan and pose formats (i.e., make them .bin and line-by-line corresponding se3 poses composed of 12 numbers)
-  sequence_scan_dir: "/home/wzhoea/Desktop/sequences/00/velodyne"
-  sequence_pose_path: "/home/wzhoea/Desktop/sequences/00/poses.txt" 
+  sequence_scan_dir: "/media/wzhoea/T7/kitti_dataset/sequences/08/velodyne"
+  sequence_pose_path: "/media/wzhoea/T7/kitti_dataset/sequences/08/poses.txt" 
 
   sequence_vfov: 50 # including upper and lower fovs, for example, KITTI's HDL64E is 2 + 24.9 ~ 27 deg. (so 25 + 25 = 50 is recommended because it is enough)
   sequence_hfov: 360 # generally for targetting scanning LiDAR but a lidar having restricted hfov also just can use the 360 (because no point regions are considered in the algorithm)
 
 
   # @ Sequence's BaseToLidar info
-  #ExtrinsicLiDARtoPoseBase: # this is for the KITTI (in the removert example, using SuMa poses written in the camera coord)
-  #    [-1.857e-03, -9.999e-01, -8.039e-03, -4.784e-03,
-  #     -6.481e-03,  8.0518e-03, -9.999e-01, -7.337e-02,
-  #      9.999e-01, -1.805e-03, -6.496e-03, -3.339e-01,
-  #      0.0,        0.0,        0.0,        1.0]
+  ExtrinsicLiDARtoPoseBase: # this is for the KITTI (in the removert example, using SuMa poses written in the camera coord)
+      [-1.857e-03, -9.999e-01, -8.039e-03, -4.784e-03,
+       -6.481e-03,  8.0518e-03, -9.999e-01, -7.337e-02,
+        9.999e-01, -1.805e-03, -6.496e-03, -3.339e-01,
+        0.0,        0.0,        0.0,        1.0]
   # @ If you use the lidar-itself odometry (e.g., from A-LOAM or using odometry saver https://github.com/SMRT-AIST/interactive_slam/wiki/Example2), 
   #   use the below identity matrix, not the above KITTI pose setting (w.r.t the camera).
-  ExtrinsicLiDARtoPoseBase: [1.0, 0.0, 0.0, 0.0, 
-                              0.0, 1.0, 0.0, 0.0, 
-                              0.0, 0.0, 1.0, 0.0, 
-                              0.0, 0.0, 0.0, 1.0]
+  #ExtrinsicLiDARtoPoseBase: [1.0, 0.0, 0.0, 0.0, 
+  #                            0.0, 1.0, 0.0, 0.0, 
+  #                            0.0, 0.0, 1.0, 0.0, 
+  #                            0.0, 0.0, 0.0, 1.0]
 
 
   # @ Sampling nodes 
   use_keyframe_gap: true 
-  keyframe_gap: 5 # i.e., 5 means every 5 frames // 5 is recommended for fast removing while preserving the static map's quality # if you make all scans clean, use this value = 1
+  keyframe_gap: 1 # i.e., 5 means every 5 frames // 5 is recommended for fast removing while preserving the static map's quality # if you make all scans clean, use this value = 1
   # keyframe_gap: 2 # i.e., 5 means every 5 frames // 5 is recommended for fast removing while preserving the static map's quality # if you make all scans clean, use this value = 1
 
   # use_keyframe_meter: false # TODO
@@ -49,8 +49,8 @@ removert:
   #   means the removeter runs on all scans in a specified regions of a sequence 
   #   it means we parse scans every <keyframe_gap> or <keyframe_gap_meter> meter within the idx range [start_idx, end_idx] 
   #   but for a single batch, < 100 scans are recommended for the computation speed.
-  start_idx: 1000 # change this
-  end_idx: 2000 # change this
+  start_idx: 150 # change this
+  end_idx: 300 # change this
 
 
   # @ auto repeat
@@ -71,7 +71,7 @@ removert:
   revert_resolution_list: [1.0, 0.9, 0.8, 0.7] # TODO
 
 
-  # @ Removert params 
+  # @ Removert params   
   # about density 
   downsample_voxel_size: 0.05 # user parameter but recommend to use 0.05 to make sure an enough density (this value is related to the removing resolution's expected performance)
 

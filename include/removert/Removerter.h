@@ -18,6 +18,7 @@ private:
     std::vector<std::string> sequence_valid_scan_names_;
     std::vector<std::string> sequence_valid_scan_paths_;
     std::vector<pcl::PointCloud<PointType>::Ptr> scans_;
+    std::vector<pcl::PointCloud<PointType>::Ptr> scans_original_;
     std::vector<pcl::PointCloud<PointType>::Ptr> scans_static_;
     std::vector<pcl::PointCloud<PointType>::Ptr> scans_dynamic_;
 

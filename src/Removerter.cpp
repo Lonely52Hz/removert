@@ -158,6 +158,7 @@ void Removerter::readValidScans( void )
 
         // save downsampled pointcloud
         scans_.emplace_back(downsampled_points);
+        scans_original_.emplace_back(points);
 
         // cout for debug  
         cout_counter++;
@@ -707,13 +708,20 @@ std::pair<pcl::PointCloud<PointType>::Ptr, pcl::PointCloud<PointType>::Ptr>
     Removerter::removeDynamicPointsOfScanByKnn ( int _scan_idx )
 {    
     // curr scan (in local coord)
-    pcl::PointCloud<PointType>::Ptr scan_orig = scans_.at(_scan_idx); 
+    pcl::PointCloud<PointType>::Ptr scan_orig = scans_original_.at(_scan_idx); 
     auto scan_pose = scan_poses_.at(_scan_idx);
 
     // curr scan (in global coord)
     pcl::PointCloud<PointType>::Ptr scan_orig_global = local2global(scan_orig, _scan_idx);
     kdtree_scan_global_curr_->setInputCloud(scan_orig_global); 
     int num_points_of_a_scan = scan_orig_global->points.size();
+
+    //
+    std::string scan_label_idx = save_pcd_directory_ + "scan_label_idx";
+    std::string scan_idx = std::to_string(_scan_idx + start_idx_);
+    fsmkdir(scan_label_idx);
+    std::ofstream output;
+    output.open(scan_label_idx + "/" + std::string(6 - scan_idx.length(), '0') + scan_idx + ".txt");
 
     // 
     pcl::PointCloud<PointType>::Ptr scan_static_global (new pcl::PointCloud<PointType>); 
@@ -735,12 +743,15 @@ std::pair<pcl::PointCloud<PointType>::Ptr, pcl::PointCloud<PointType>::Ptr>
         // 
         if ( std::abs(avg_topknn_dists_in_scan - avg_topknn_dists_in_map) < kScanKnnAndMapKnnAvgDiffThreshold) {
             scan_static_global->push_back(scan_orig_global->points[pt_idx]);
+            output << std::to_string(pt_idx) << "\n";
         } else {
             scan_dynamic_global->push_back(scan_orig_global->points[pt_idx]);
         }
     }
 
-    // again global2local because later in the merging global map function, which requires scans within each local coord. 
+    output.close();
+
+    // again global2local because later in the merging global map function, which requires scans within each local coord.
     pcl::PointCloud<PointType>::Ptr scan_static_local = global2local(scan_static_global, _scan_idx);
     pcl::PointCloud<PointType>::Ptr scan_dynamic_local = global2local(scan_dynamic_global, _scan_idx);
 
@@ -888,4 +899,4 @@ void Removerter::run( void )
     // scan-side removals
     scansideRemovalForEachScanAndSaveThem();
 
-}
+}   
